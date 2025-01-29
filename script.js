@@ -2,17 +2,18 @@ const form = document.querySelector('.form-container');
 const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 const typeSelect = document.querySelector('#type');
 const button = document.querySelector('button');
+const totalPriceElement = document.querySelector('#totalPrice');
 
-let total;
+let total = 0;
 let toppings = [];
 let extras = [];
 
 const pancakePriceCalc = () => {
-  const totalPriceElement = document.querySelector('#totalPrice');
-  const priceBanner = document.querySelector('.price-banner');
-
+  const priceBanner = document.querySelector('.price-banner')
+  total = typeSelect.value;
+  console.log(total, typeof(total));
   total = parseInt(typeSelect.value);
-  totalPriceElement.textContent = `$${total}`;
+  totalPriceElement.textContent = `${total}€`;
 
   checkToppings();
 
@@ -29,27 +30,39 @@ const pancakePriceCalc = () => {
   );
 };
 
-const addItem = (itemName, category) => {
+const addItem = (itemName, category, value) => {
   if (category === 'toppings') {
-    toppings.push(itemName);
-  } else {
-    extras.push(itemName);
+    toppings.push(itemName, value);
+    console.log(total, typeof(total))
+    console.log(value, typeof(value))
+    total += value;
+    totalPriceElement.textContent = total + " €"
+
+  } else if (category === 'extras'){
+    extras.push(itemName, value);
+    total += value;
+    totalPriceElement.textContent = total + " €"
   }
 };
 
 const checkToppings = () => {
   toppings = [];
   extras = [];
+  console.log(checkboxes);
 
   for (const item of checkboxes) {
     const itemName = item.dataset.name;
     const category = item.dataset.category;
+    const value = parseInt(item.value);
+    
+    console.log(itemName, category)
+    console.log(item.value)
 
     if (item.checked) {
-      total += parseInt(item.value);
-      addItem(itemName, category);
+      //total += parseInt(item.value);
+      addItem(itemName, category, value);
     } else {
-      removeItem(itemName, category);
+    //   removeItem(itemName, category);
     }
   }
   console.log('toppings array', toppings);
@@ -68,7 +81,7 @@ const displayOrder = () => {
   orderToppings.textContent = toppings.join(', ');
   orderExtras.textContent = extras.join(', ');
   orderName.textContent = customerName;
-  orderPrice.textContent = total;
+  orderPrice.textContent = total + " €";
 };
 
 form.addEventListener('change', pancakePriceCalc);
